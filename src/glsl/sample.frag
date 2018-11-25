@@ -55,15 +55,14 @@ vec3 rayAABBNorm(vec3 p, vec3 v) {
   vec3 dabs = abs(d);
   if (dabs.x > dabs.y) {
     if (dabs.x > dabs.z) {
-      return vec3(sign(d.x), 0, 0);
-    } else {
-      return vec3(0, 0, sign(d.z));
+      return vec3(sign(d.x), 0.0, 0.0);
     }
+    return vec3(0.0, 0.0, sign(d.z));
   } else {
     if (dabs.y > dabs.z) {
-      return vec3(0, sign(d.y), 0);
+      return vec3(0.0, sign(d.y), 0.0);
     } else {
-      return vec3(0, 0, sign(d.z));
+      return vec3(0.0, 0.0, sign(d.z));
     }
   }
 }
