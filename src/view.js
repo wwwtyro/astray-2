@@ -26,7 +26,7 @@ module.exports = async function Renderer(canvas) {
   const tWall = regl.texture(await loadImage(given.wallImage));
   const tGround = regl.texture(await loadImage(given.groundImage));
 
-  // Create a set of pingpong fromeboffers.
+  // Create a set of pingpong framebuffers.
   const pingPong = [
     regl.framebuffer({
       width: canvas.width,
