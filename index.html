@@ -1,0 +1,66 @@
+
+<html>
+    <head>
+        <script src='static/bundle.js' defer></script>
+        <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans" rel="stylesheet">
+        <style>
+            body {
+                margin: 0px;
+                padding: 0px;
+                background: #000;
+                font-family: 'Black Han Sans', sans-serif;
+                text-shadow: 3px 3px #000;
+            }
+            #render-canvas {
+                image-rendering: pixelated;
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                left: 0px;
+                top: 0px;
+            }
+            #level {
+              position: fixed;
+              top: 8px;
+              right: 8px;
+              color: white;
+              font-size: 32px;
+              text-shadow: 3px 3px #000;
+            }
+            #help-help {
+              position: fixed;
+              bottom: 8px;
+              right: 8px;
+              color: white;
+              font-size: 16px;
+            }
+            #help-wrapper {
+              position: fixed;
+              top: 0px;
+              left: 0px;
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            #help {
+              color: white;
+              font-size: 24px;
+              width: 50%;
+              text-align: center;
+              display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id='render-canvas'></canvas>
+        <div id='level'>Level 1</div>
+        <div id='help-help'>Press H for help.</div>
+        <div id='help-wrapper'>
+          <div id='help'>
+            Use the arrow keys to move the ball and escape the maze.
+          </div>
+        </div>
+    </body>
+</html>
