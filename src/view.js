@@ -247,11 +247,23 @@ module.exports = async function Renderer(canvas) {
     // Figure out the current time so that we can set the sun position.
     let time = performance.now() * 0.00001 + 0.1;
 
-    // We'll take this many samples before rendering to the screen.
-    let sampleCount = 4;
+    // OLD: We'll take this many samples before rendering to the screen.
+	// Start at 0 samples. ADDITION FROM Bram S.
+    let sampleCount = 0;
 
+    // The time at which we start this frame. ADDITION FROM Bram S.
+	let startTime = performance.now();
+	// The maximum samples for a single frame. ADDITION FROM Bram S.
+	let maxSamples = given.maxSamples;
+	
     // Take sampleCount samples.
-    for (let i = 0; i < sampleCount; i++) {
+    // OLD:  for (let i = 0; i < sampleCount; i++) {
+	// Keep going until it takes longer than (60.0 / targetFPS) milliseconds (in this case 1 ms). ADDITION FROM Bram S.
+	// We always want at least one sample, so therefor the "sampleCount == 0" and we also have a maximum amount of samples.
+	while((performance.now() - startTime < (60.0 / given.targetFPS) || sampleCount == 0) && sampleCount < maxSamples){
+	  // Add to the sample count for proper averaging. ADDITION FROM Bram S.
+	  sampleCount += 1;
+	  
       regl.clear({
         depth: 1,
         framebuffer: pingPong[pingPongIndex]
