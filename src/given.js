@@ -16,7 +16,7 @@ module.exports = {
   rollingSound: 'static/rolling.wav', // The sound made when the ball rolls.
   clinkSound: 'static/clink.wav',     // The sound made when the ball hits something.
   dingSound: 'static/ding.wav',       // The sound made at the end of each level.
-  initialResolution: 4                // Initial resolution scaling.
+  initialResolution: 4,                // Initial resolution scaling.
   targetFPS: 60,					  // The FPS to try and get. ADDITION FROM Bram S.
   maxSamples: 256,					  // The maximum samples per pixel per frame. ADDITION FROM Bram S.
 };
