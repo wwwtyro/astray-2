@@ -1,25 +1,23 @@
-
 "use strict";
 
-const REGL = require('regl'); // Awesome webgl library of awesomeness.
-const { mat4, vec3, vec2 } = require('gl-matrix'); // Matrix/vector math library.
-const glsl = require('glslify'); // I don't know how to describe this in a sentence.
+const REGL = require("regl"); // Awesome webgl library of awesomeness.
+const { mat4, vec3, vec2 } = require("gl-matrix"); // Matrix/vector math library.
+const glsl = require("glslify"); // I don't know how to describe this in a sentence.
 const createCube = require("primitive-cube"); // Cube mesh generator.
 const unindex = require("unindex-mesh"); // Mesh de-indexer.
 const renderEnvMap = require("regl-render-envmap"); // Renders an environment map.
 
-const given = require('./given'); // Constatns for the game.
+const given = require("./given"); // Constatns for the game.
 
 module.exports = async function Renderer(canvas) {
-
   // Create our webgl context. Get the float texture extension and disable
   // antialiasing.
   const regl = REGL({
     canvas: canvas,
-    extensions: ['OES_texture_float'],
+    extensions: ["OES_texture_float"],
     attributes: {
       antialias: false
-    },
+    }
   });
 
   // Load the wall and ground textures.
@@ -31,13 +29,13 @@ module.exports = async function Renderer(canvas) {
     regl.framebuffer({
       width: canvas.width,
       height: canvas.height,
-      colorType: 'float'
+      colorType: "float"
     }),
     regl.framebuffer({
       width: canvas.width,
       height: canvas.height,
-      colorType: 'float'
-    }),
+      colorType: "float"
+    })
   ];
 
   // Keep track of our pingpong framebuffers.
@@ -47,20 +45,20 @@ module.exports = async function Renderer(canvas) {
   const tRand3 = regl.texture({
     width: 1024,
     height: 1024,
-    format: 'rgb',
-    type: 'float',
-    wrap: 'repeat',
-    data: randVec3(1024),
+    format: "rgb",
+    type: "float",
+    wrap: "repeat",
+    data: randVec3(1024)
   });
 
   // Create a texture of uniform 2D vectors for use when antialiasing.
   const tJitter = regl.texture({
     width: 1024,
     height: 1024,
-    format: 'luminance alpha',
-    type: 'float',
-    wrap: 'repeat',
-    data: jitter(1024),
+    format: "luminance alpha",
+    type: "float",
+    wrap: "repeat",
+    data: jitter(1024)
   });
 
   // Initialize our stage object with fake data.
@@ -69,8 +67,8 @@ module.exports = async function Renderer(canvas) {
     height: 3,
     depth: 3,
     potSize: 16,
-    texture: regl.texture(),
-  }
+    texture: regl.texture()
+  };
 
   // Create a cube mesh. We'll use this to render the player sphere texture to
   // a cube map.
@@ -78,18 +76,18 @@ module.exports = async function Renderer(canvas) {
 
   // The command we'll use to render our player's sphere texture.
   const playerTextureCmd = regl({
-    vert: glsl(__dirname + '/glsl/player-texture.vert'),
-    frag: glsl(__dirname + '/glsl/player-texture.frag'),
+    vert: glsl(__dirname + "/glsl/player-texture.vert"),
+    frag: glsl(__dirname + "/glsl/player-texture.frag"),
     attributes: {
-      position: cube,
+      position: cube
     },
     uniforms: {
       view: regl.prop("view"),
-      projection: regl.prop("projection"),
+      projection: regl.prop("projection")
     },
     viewport: regl.prop("viewport"),
     framebuffer: regl.prop("framebuffer"),
-    count: cube.length / 3,
+    count: cube.length / 3
   });
 
   // Render the cube map for the player's sphere texture.
@@ -97,62 +95,62 @@ module.exports = async function Renderer(canvas) {
     regl.clear({
       color: [0, 0, 0, 1],
       depth: 1,
-      framebuffer: config.framebuffer,
+      framebuffer: config.framebuffer
     });
     playerTextureCmd({
       view: config.view,
       projection: config.projection,
       viewport: config.viewport,
-      framebuffer: config.framebuffer,
+      framebuffer: config.framebuffer
     });
   });
 
   // The command we'll use to sample a single frame of path tracing. We'll average
   // multiple frames tegether before presenting them to the user.
   const sampleCmd = regl({
-    vert: glsl(__dirname + '/glsl/sample.vert'),
-    frag: glsl(__dirname + '/glsl/sample.frag'),
+    vert: glsl(__dirname + "/glsl/sample.vert"),
+    frag: glsl(__dirname + "/glsl/sample.frag"),
     attributes: {
-      position: ndcBox,
+      position: ndcBox
     },
     uniforms: {
-      source: regl.prop('source'),
-      invpv: regl.prop('invpv'),
-      eye: regl.prop('eye'),
-      resolution: regl.prop('res'),
-      playerColor: regl.prop('playerColor'),
+      source: regl.prop("source"),
+      invpv: regl.prop("invpv"),
+      eye: regl.prop("eye"),
+      resolution: regl.prop("res"),
+      playerColor: regl.prop("playerColor"),
       playerRadius: given.player.radius,
       tJitter: tJitter,
       tRand3: tRand3,
       tPlayerTexture: tPlayerTexture,
       tGround: tGround,
       tWall: tWall,
-      tOffset: regl.prop('tOffset'),
+      tOffset: regl.prop("tOffset"),
       tStage: stage.texture,
-      playerPosition: regl.prop('playerPosition'),
-      lRot: regl.prop('lRot'),
-      time: regl.prop('time'),
-      resStage: regl.prop('tStageSize'),
-      bounds: regl.prop('bounds'),
+      playerPosition: regl.prop("playerPosition"),
+      lRot: regl.prop("lRot"),
+      time: regl.prop("time"),
+      resStage: regl.prop("tStageSize"),
+      bounds: regl.prop("bounds")
     },
-    viewport: regl.prop('viewport'),
-    framebuffer: regl.prop('destination'),
-    count: 6,
+    viewport: regl.prop("viewport"),
+    framebuffer: regl.prop("destination"),
+    count: 6
   });
 
   // We'll use this command to render the sampled data to the screen.
   const compositeCmd = regl({
-    vert: glsl(__dirname + '/glsl/composite.vert'),
-    frag: glsl(__dirname + '/glsl/composite.frag'),
+    vert: glsl(__dirname + "/glsl/composite.vert"),
+    frag: glsl(__dirname + "/glsl/composite.frag"),
     attributes: {
-      position: ndcBox,
+      position: ndcBox
     },
     uniforms: {
-      source: regl.prop('source'),
-      count: regl.prop('count'),
+      source: regl.prop("source"),
+      count: regl.prop("count")
     },
-    viewport: regl.prop('viewport'),
-    count: 6,
+    viewport: regl.prop("viewport"),
+    count: 6
   });
 
   // Create the texture for the voxel scene data.
@@ -166,7 +164,7 @@ module.exports = async function Renderer(canvas) {
     for (let x = 0; x < stage.width; x++) {
       for (let y = 0; y < stage.height; y++) {
         for (let z = 0; z < stage.depth; z++) {
-          const d = s.data[[x,y,z]];
+          const d = s.data[[x, y, z]];
           if (d) {
             const i = y * stage.width * stage.depth + z * stage.width + x;
             stageData[i] = d;
@@ -177,37 +175,49 @@ module.exports = async function Renderer(canvas) {
     stage.texture({
       width: stage.potSize,
       height: stage.potSize,
-      format: 'alpha',
-      data: stageData,
+      format: "alpha",
+      data: stageData
     });
   }
 
+  let resolutionScale = mobilecheck()
+    ? 2 * given.initialResolution
+    : given.initialResolution;
+
   // Handle window resizes.
   function onResize() {
-    let scale = mobilecheck() ? 8 : 4;
-    canvas.height = canvas.clientHeight / scale;
-    canvas.width = canvas.clientWidth / scale;
+    canvas.height = canvas.clientHeight / resolutionScale;
+    canvas.width = canvas.clientWidth / resolutionScale;
     pingPong[0]({
       width: canvas.width,
       height: canvas.height,
-      colorType: 'float'
+      colorType: "float"
     });
     pingPong[1]({
       width: canvas.width,
       height: canvas.height,
-      colorType: 'float'
+      colorType: "float"
     });
   }
-  window.addEventListener('resize', onResize);
+  window.addEventListener("resize", onResize);
 
   // Initial sizing.
   onResize();
 
+  // Change the resolution at user request.
+  function setResolution(scale) {
+    resolutionScale = scale;
+    onResize();
+  }
+
   // Render all the things!
   function render(player, cam) {
-
     // Get the 3D player position.
-    const playerPosition = [player.position[0], player.position[1], 1 + given.player.radius];
+    const playerPosition = [
+      player.position[0],
+      player.position[1],
+      1 + given.player.radius
+    ];
 
     // Get the 3D camera position, target, and up vectors.
     const tilt = mobilecheck() ? 0 : 1;
@@ -217,7 +227,13 @@ module.exports = async function Renderer(canvas) {
 
     // Create the projection and view matrices and get the inverse projection * view
     // matrix.
-    const proj = mat4.perspective([], Math.PI/3, canvas.width/canvas.height, 0.1, 1000);
+    const proj = mat4.perspective(
+      [],
+      Math.PI / 3,
+      canvas.width / canvas.height,
+      0.1,
+      1000
+    );
     const view = mat4.lookAt([], eye, center, up);
     const pv = mat4.multiply([], proj, view);
     const invpv = mat4.invert([], pv);
@@ -225,7 +241,7 @@ module.exports = async function Renderer(canvas) {
     // Clear the current pingpong FBO.
     regl.clear({
       color: [0, 0, 0, 0],
-      framebuffer: pingPong[1 - pingPongIndex],
+      framebuffer: pingPong[1 - pingPongIndex]
     });
 
     // Figure out the current time so that we can set the sun position.
@@ -238,7 +254,7 @@ module.exports = async function Renderer(canvas) {
     for (let i = 0; i < sampleCount; i++) {
       regl.clear({
         depth: 1,
-        framebuffer: pingPong[pingPongIndex],
+        framebuffer: pingPong[pingPongIndex]
       });
       sampleCmd({
         eye: eye,
@@ -251,9 +267,9 @@ module.exports = async function Renderer(canvas) {
         lRot: player.rotation,
         tStageSize: stage.potSize,
         bounds: [stage.width, stage.height, stage.depth],
-        viewport: {x: 0, y: 0, width: canvas.width, height: canvas.height},
+        viewport: { x: 0, y: 0, width: canvas.width, height: canvas.height },
         source: pingPong[1 - pingPongIndex],
-        destination: pingPong[pingPongIndex],
+        destination: pingPong[pingPongIndex]
       });
       pingPongIndex = 1 - pingPongIndex;
     }
@@ -262,27 +278,19 @@ module.exports = async function Renderer(canvas) {
     compositeCmd({
       source: pingPong[1 - pingPongIndex],
       count: sampleCount,
-      viewport: {x: 0, y: 0, width: canvas.width, height: canvas.height},
+      viewport: { x: 0, y: 0, width: canvas.width, height: canvas.height }
     });
-
   }
 
   return {
     render: render,
-    setStage: setStage
-  }
-
-}
+    setStage: setStage,
+    setResolution: setResolution
+  };
+};
 
 // Full screen 2D mesh.
-const ndcBox = [
-  -1, -1,
-   1, -1,
-   1,  1,
-  -1, -1,
-   1,  1,
-  -1,  1
-]
+const ndcBox = [-1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1];
 
 // Find a 2D power-of-two resolution that will fit at least count pixels.
 function fitPOT(count) {
@@ -313,7 +321,7 @@ function jitter(size) {
     data[i * 2 + 1] = Math.random() - 0.5;
   }
   return data;
-};
+}
 
 // async/await image loading utility
 function loadImage(src) {

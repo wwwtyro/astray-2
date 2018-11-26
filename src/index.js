@@ -67,6 +67,14 @@ async function main() {
     if (kb.ArrowLeft) model.pushPlayer(-given.player.speed, 0);
     if (kb.ArrowUp) model.pushPlayer(0, given.player.speed);
     if (kb.ArrowDown) model.pushPlayer(0, -given.player.speed);
+    if (kb.Digit1) view.setResolution(1);
+    if (kb.Digit2) view.setResolution(2);
+    if (kb.Digit3) view.setResolution(3);
+    if (kb.Digit4) view.setResolution(4);
+    if (kb.Digit5) view.setResolution(5);
+    if (kb.Digit6) view.setResolution(6);
+    if (kb.Digit7) view.setResolution(7);
+    if (kb.Digit8) view.setResolution(8);
 
     // If the H key is being pressed, show help.
     if (kb.KeyH) {

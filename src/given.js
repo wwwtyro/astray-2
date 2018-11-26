@@ -16,4 +16,5 @@ module.exports = {
   rollingSound: 'static/rolling.wav', // The sound made when the ball rolls.
   clinkSound: 'static/clink.wav',     // The sound made when the ball hits something.
   dingSound: 'static/ding.wav',       // The sound made at the end of each level.
+  initialResolution: 4                // Initial resolution scaling.
 };
