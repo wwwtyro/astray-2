@@ -184,8 +184,9 @@ module.exports = async function Renderer(canvas) {
 
   // Handle window resizes.
   function onResize() {
-    canvas.height = canvas.clientHeight / 4;
-    canvas.width = canvas.clientWidth / 4;
+    let scale = mobilecheck() ? 8 : 4;
+    canvas.height = canvas.clientHeight / scale;
+    canvas.width = canvas.clientWidth / scale;
     pingPong[0]({
       width: canvas.width,
       height: canvas.height,
@@ -209,8 +210,9 @@ module.exports = async function Renderer(canvas) {
     const playerPosition = [player.position[0], player.position[1], 1 + given.player.radius];
 
     // Get the 3D camera position, target, and up vectors.
-    const eye = [cam[0], cam[1] - 1, stage.depth + 4];
-    const center = [eye[0], eye[1] + 1, 0];
+    const tilt = mobilecheck() ? 0 : 1;
+    const eye = [cam[0], cam[1] - tilt, stage.depth + 4];
+    const center = [eye[0], eye[1] + tilt, 0];
     const up = [0, 1, 0];
 
     // Create the projection and view matrices and get the inverse projection * view
